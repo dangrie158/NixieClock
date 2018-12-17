@@ -1,0 +1,37 @@
+EDIT FrontPanel.brd;
+WRITE Panel.brd;
+EDIT Panel.brd;
+GRID MM;
+PASTE Controller.brd (0 62);
+
+LAYER 'DIMENSION';
+
+LINE 'Dimension' 0 (3 61) (3 62);
+LINE 'Dimension' 0 (4 61) (4 62);
+
+LINE 'Dimension' 0 (24.5 61) (24.5 62);
+LINE 'Dimension' 0 (25.5 61) (25.5 62);
+
+LINE 'Dimension' 0 (49.5 61) (49.5 62);
+LINE 'Dimension' 0 (51.5 61) (51.5 62);
+
+LINE 'Dimension' 0 (74.5 61) (74.5 62);
+LINE 'Dimension' 0 (75.5 61) (75.5 62);
+
+LINE 'Dimension' 0 (96 61) (96 62);
+LINE 'Dimension' 0 (97 61) (97 62);
+
+DISPLAY NONE 'Dimension';
+DELETE (3.5 62);
+DELETE (25 62);
+DELETE (50 62);
+DELETE (75 62);
+DELETE (96.5 62);
+
+DELETE (3.5 60);
+DELETE (25 60);
+DELETE (50 60);
+DELETE (75 60);
+DELETE (96.5 60);
+
+DISPLAY ALL
