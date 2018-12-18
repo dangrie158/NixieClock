@@ -168,7 +168,7 @@
 <layer number="255" name="routoute" color="7" fill="1" visible="no" active="yes"/>
 </layers>
 <board>
-<fusionsync huburn="a.cGVyc29uYWw6dWUyOWFjMzc0" projecturn="a.cGVyc29uYWw6dWUyOWFjMzc0IzIwMTgxMjE1MTY1NzEwMjUx" f3durn="urn:adsk.wipprod:dm.lineage:G7dfRljxSNeU89o-z_WEMA" pcbguid="b1b3dd3f-75fb-4ac5-896a-60a18c9722c4" lastpulledtime="" lastsyncedchangeguid="623f970e-da3e-76e7-045c-4c13afc058ec"/>
+<fusionsync huburn="a.cGVyc29uYWw6dWUyOWFjMzc0" projecturn="a.cGVyc29uYWw6dWUyOWFjMzc0IzIwMTgxMjE1MTY1NzEwMjUx" f3durn="urn:adsk.wipprod:dm.lineage:G7dfRljxSNeU89o-z_WEMA" pcbguid="b1b3dd3f-75fb-4ac5-896a-60a18c9722c4" lastpulledtime="" lastsyncedchangeguid="e9984cff-2df9-00f1-3fd2-71492f54e863"/>
 <plain>
 <text x="24.765" y="5.883275" size="0.6096" layer="22" font="fixed" rot="MR90" align="center">160
 V</text>
