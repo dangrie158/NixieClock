@@ -3,7 +3,7 @@
 <eagle version="9.2.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="no"/>
+<setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="39.3700787" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.5" altunitdist="mm" altunit="mm"/>
@@ -193,7 +193,7 @@
 <wire x1="26.035" y1="13.97" x2="23.495" y2="13.97" width="0.1524" layer="25"/>
 <wire x1="5.08" y1="10.414" x2="17.78" y2="10.414" width="0.1524" layer="21"/>
 <wire x1="20.828" y1="10.414" x2="26.035" y2="10.414" width="0.1524" layer="21"/>
-<text x="7.81" y="22.59" size="1.27" layer="21" font="fixed" align="center">12V
+<text x="7.81" y="22.09" size="1.27" layer="21" font="fixed" align="center">12V
 IN</text>
 <text x="87.67" y="15.89" size="1.27" layer="21" font="fixed" rot="R90" align="center">Nixie Clock</text>
 <text x="94.79" y="15.89" size="1.27" layer="21" font="fixed" rot="R90" align="center">Controller Board</text>
@@ -1385,7 +1385,7 @@ D1 mini</text>
 <text x="0" y="10.16" size="1.4224" layer="49" align="center">ANTENNA
 KEEP CLEAR</text>
 </package>
-<package name="NCH6100HV" urn="urn:adsk.eagle:footprint:7493701/3" library_version="22">
+<package name="NCH6100HV" urn="urn:adsk.eagle:footprint:7493701/4" library_version="25">
 <pad name="GND1" x="10" y="-4.25" drill="1" shape="long"/>
 <pad name="SHDN" x="10" y="-6.79" drill="1" shape="long"/>
 <pad name="VIN" x="10" y="-9.33" drill="1" shape="long"/>
@@ -1644,15 +1644,15 @@ KEEP CLEAR</text>
 <wire x1="2.4925" y1="-7.9375" x2="2.4925" y2="-5.3975" width="0.254" layer="21"/>
 <wire x1="2.4925" y1="-7.9375" x2="2.4925" y2="-10.4775" width="0.254" layer="21"/>
 <wire x1="2.4925" y1="-10.4775" x2="7.9375" y2="-10.4775" width="0.254" layer="21"/>
-<wire x1="36.43" y1="-3.3975" x2="36.43" y2="-8.4775" width="0.254" layer="22"/>
-<wire x1="36.43" y1="-8.4775" x2="32.3025" y2="-8.4775" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-8.4775" x2="32.3025" y2="-5.9375" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-5.9375" x2="32.3025" y2="-3.3975" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-3.3975" x2="41.875" y2="-3.3975" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-5.9375" x2="41.875" y2="-5.9375" width="0.254" layer="22"/>
-<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-3.3975" width="0.254" layer="22"/>
-<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-8.4775" width="0.254" layer="22"/>
-<wire x1="41.875" y1="-8.4775" x2="36.43" y2="-8.4775" width="0.254" layer="22"/>
+<wire x1="36.43" y1="-3.3975" x2="36.43" y2="-8.4775" width="0.254" layer="21"/>
+<wire x1="36.43" y1="-8.4775" x2="32.3025" y2="-8.4775" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-8.4775" x2="32.3025" y2="-5.9375" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-5.9375" x2="32.3025" y2="-3.3975" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-3.3975" x2="41.875" y2="-3.3975" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-5.9375" x2="41.875" y2="-5.9375" width="0.254" layer="21"/>
+<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-3.3975" width="0.254" layer="21"/>
+<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-8.4775" width="0.254" layer="21"/>
+<wire x1="41.875" y1="-8.4775" x2="36.43" y2="-8.4775" width="0.254" layer="21"/>
 <hole x="2" y="-14" drill="2.2"/>
 <hole x="43" y="-14" drill="2.2"/>
 <circle x="8" y="-29" radius="6.5" width="0.127" layer="51"/>
@@ -1807,7 +1807,7 @@ KEEP CLEAR</text>
 <packageinstance name="WEMOS-D1-MINI"/>
 </packageinstances>
 </package3d>
-<package3d name="NCH6100HV" urn="urn:adsk.eagle:package:7493703/5" type="model" library_version="22">
+<package3d name="NCH6100HV" urn="urn:adsk.eagle:package:7493703/6" type="model" library_version="25">
 <packageinstances>
 <packageinstance name="NCH6100HV"/>
 </packageinstances>
@@ -2301,12 +2301,12 @@ design rules under a new name.</description>
 </autorouter>
 <elements>
 <element name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" package="C0603K" package3d_urn="urn:adsk.eagle:package:23680/2" value="1u" x="21.5" y="34.5" smashed="yes">
-<attribute name="NAME" x="21.5" y="35.167" size="1.27" layer="25" align="bottom-center"/>
+<attribute name="NAME" x="21.5" y="35.667" size="1.27" layer="25" align="bottom-center"/>
 <attribute name="SPICEPREFIX" value="C" x="40.55" y="-21.38" size="1.778" layer="27" display="off"/>
 <attribute name="VALUE" x="20.7" y="32.85" size="1.016" layer="27"/>
 </element>
 <element name="C2" library="rcl" library_urn="urn:adsk.eagle:library:334" package="C0603K" package3d_urn="urn:adsk.eagle:package:23680/2" value="10u" x="25" y="34.5" smashed="yes">
-<attribute name="NAME" x="25" y="35.167" size="1.27" layer="25" align="bottom-center"/>
+<attribute name="NAME" x="25" y="35.667" size="1.27" layer="25" align="bottom-center"/>
 <attribute name="SPICEPREFIX" value="C" x="40.24" y="-21.38" size="1.778" layer="27" display="off"/>
 <attribute name="VALUE" x="24.2" y="32.85" size="1.016" layer="27"/>
 </element>
@@ -2318,7 +2318,7 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="13.7526" y="37.1872" size="0.6096" layer="27" font="vector" ratio="20" rot="R180"/>
 </element>
 <element name="U$12" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" package="WEMOS-D1-MINI" package3d_urn="urn:adsk.eagle:package:7482059/4" value="WEMOS-D1" x="40.838" y="15.781" smashed="yes" rot="R180"/>
-<element name="U$1" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" package="NCH6100HV" package3d_urn="urn:adsk.eagle:package:7493703/5" value="NCH6100HV" x="54.5" y="37.508" smashed="yes"/>
+<element name="U$1" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" package="NCH6100HV" package3d_urn="urn:adsk.eagle:package:7493703/6" value="NCH6100HV" x="54.5" y="37.508" smashed="yes"/>
 <element name="HV" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" package="FE02W" package3d_urn="urn:adsk.eagle:package:7496217/4" value="1" x="23.495" y="8.81" smashed="yes" rot="R180">
 <attribute name="VALUE" x="24.257" y="6.278" size="1.27" layer="27" ratio="10" rot="R270"/>
 </element>

@@ -274,7 +274,7 @@ D1 mini</text>
 <text x="0" y="10.16" size="1.4224" layer="49" align="center">ANTENNA
 KEEP CLEAR</text>
 </package>
-<package name="NCH6100HV" urn="urn:adsk.eagle:footprint:7493701/3" library_version="22">
+<package name="NCH6100HV" urn="urn:adsk.eagle:footprint:7493701/4" library_version="25">
 <pad name="GND1" x="10" y="-4.25" drill="1" shape="long"/>
 <pad name="SHDN" x="10" y="-6.79" drill="1" shape="long"/>
 <pad name="VIN" x="10" y="-9.33" drill="1" shape="long"/>
@@ -533,15 +533,15 @@ KEEP CLEAR</text>
 <wire x1="2.4925" y1="-7.9375" x2="2.4925" y2="-5.3975" width="0.254" layer="21"/>
 <wire x1="2.4925" y1="-7.9375" x2="2.4925" y2="-10.4775" width="0.254" layer="21"/>
 <wire x1="2.4925" y1="-10.4775" x2="7.9375" y2="-10.4775" width="0.254" layer="21"/>
-<wire x1="36.43" y1="-3.3975" x2="36.43" y2="-8.4775" width="0.254" layer="22"/>
-<wire x1="36.43" y1="-8.4775" x2="32.3025" y2="-8.4775" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-8.4775" x2="32.3025" y2="-5.9375" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-5.9375" x2="32.3025" y2="-3.3975" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-3.3975" x2="41.875" y2="-3.3975" width="0.254" layer="22"/>
-<wire x1="32.3025" y1="-5.9375" x2="41.875" y2="-5.9375" width="0.254" layer="22"/>
-<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-3.3975" width="0.254" layer="22"/>
-<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-8.4775" width="0.254" layer="22"/>
-<wire x1="41.875" y1="-8.4775" x2="36.43" y2="-8.4775" width="0.254" layer="22"/>
+<wire x1="36.43" y1="-3.3975" x2="36.43" y2="-8.4775" width="0.254" layer="21"/>
+<wire x1="36.43" y1="-8.4775" x2="32.3025" y2="-8.4775" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-8.4775" x2="32.3025" y2="-5.9375" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-5.9375" x2="32.3025" y2="-3.3975" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-3.3975" x2="41.875" y2="-3.3975" width="0.254" layer="21"/>
+<wire x1="32.3025" y1="-5.9375" x2="41.875" y2="-5.9375" width="0.254" layer="21"/>
+<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-3.3975" width="0.254" layer="21"/>
+<wire x1="41.875" y1="-5.9375" x2="41.875" y2="-8.4775" width="0.254" layer="21"/>
+<wire x1="41.875" y1="-8.4775" x2="36.43" y2="-8.4775" width="0.254" layer="21"/>
 <hole x="2" y="-14" drill="2.2"/>
 <hole x="43" y="-14" drill="2.2"/>
 <circle x="8" y="-29" radius="6.5" width="0.127" layer="51"/>
@@ -696,7 +696,7 @@ KEEP CLEAR</text>
 <packageinstance name="WEMOS-D1-MINI"/>
 </packageinstances>
 </package3d>
-<package3d name="NCH6100HV" urn="urn:adsk.eagle:package:7493703/5" type="model" library_version="22">
+<package3d name="NCH6100HV" urn="urn:adsk.eagle:package:7493703/6" type="model" library_version="25">
 <packageinstances>
 <packageinstance name="NCH6100HV"/>
 </packageinstances>
@@ -892,7 +892,7 @@ KEEP CLEAR</text>
 </device>
 </devices>
 </deviceset>
-<deviceset name="NCH6100HV" urn="urn:adsk.eagle:component:7493704/4" library_version="22">
+<deviceset name="NCH6100HV" urn="urn:adsk.eagle:component:7493704/5" library_version="25">
 <gates>
 <gate name="MOD$1" symbol="NCH6100HV" x="-5.08" y="-2.54"/>
 </gates>
@@ -906,7 +906,7 @@ KEEP CLEAR</text>
 <connect gate="MOD$1" pin="VOUT" pad="VOUT"/>
 </connects>
 <package3dinstances>
-<package3dinstance package3d_urn="urn:adsk.eagle:package:7493703/5"/>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7493703/6"/>
 </package3dinstances>
 <technologies>
 <technology name=""/>
@@ -5483,7 +5483,7 @@ POWER_JACK
 <part name="P+10" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
 <part name="+3V1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+3V3" device=""/>
 <part name="SUPPLY12" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="GND" device=""/>
-<part name="U$1" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" deviceset="NCH6100HV" device="" package3d_urn="urn:adsk.eagle:package:7493703/5"/>
+<part name="U$1" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" deviceset="NCH6100HV" device="" package3d_urn="urn:adsk.eagle:package:7493703/6"/>
 <part name="HV" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" deviceset="FE02W" device="" package3d_urn="urn:adsk.eagle:package:7496217/4" value="1"/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+12V" device=""/>
 <part name="SUPPLY1" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="GND" device=""/>
