@@ -181,7 +181,7 @@ void updateTimeZoneInfo()
 void display(tmElements_t time)
 {
   uint64_t serialStream = 0;
-  
+
   serialStream |= 1ull << digitsPinmap[0][time.Hour / 10];
   serialStream |= 1ull << digitsPinmap[1][time.Hour % 10];
   serialStream |= 1ull << digitsPinmap[2][time.Minute / 10];
@@ -201,12 +201,12 @@ void display(tmElements_t time)
   {
     uint8_t dataByte = (serialStream >> (numByte * 8)) & 0xFF;
     shiftOut(dataPin, clockPin, LSBFIRST, dataByte);
-    #ifdef DEBUG
+#ifdef DEBUG
     Serial.print("Chip ");
     Serial.print(NUM_CHIPS - numByte);
     Serial.print(" set to state ");
     Serial.println(String(dataByte, BIN));
-    #endif
+#endif
   }
 
   // latch the temp register into the output
@@ -215,15 +215,19 @@ void display(tmElements_t time)
 
 void setup()
 {
-#ifdef DEBUG
-  // setup the debug serial port
-  Serial.begin(115200);
-#endif
-
   // setup GPIO data directions
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+
+  // set the outputs to a known state ASAP
+  tmElements_t allZeros = {0, 0, 0};
+  display(allZeros);
+
+#ifdef DEBUG
+  // setup the debug serial port
+  Serial.begin(115200);
+#endif
 
   // auto-manage wifi configuration
   if (!MDNS.begin("nixie"))
