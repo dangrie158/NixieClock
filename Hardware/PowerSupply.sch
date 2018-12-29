@@ -23313,7 +23313,9 @@ grid 2.54 mm, vertical</description>
 </classes>
 <parts>
 <part name="L1" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" deviceset="TC-PIS4728" device="" package3d_urn="urn:adsk.eagle:package:7646352/3" value="270uH/1.2A"/>
-<part name="U1" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" deviceset="MC34063" device="" package3d_urn="urn:adsk.eagle:package:7646370/1"/>
+<part name="U1" library="NixieClock" library_urn="urn:adsk.eagle:library:7479626" deviceset="MC34063" device="" package3d_urn="urn:adsk.eagle:package:7646370/1">
+<attribute name="SPICEPREFIX" value="X"/>
+</part>
 <part name="CT" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="C0603K" package3d_urn="urn:adsk.eagle:package:23680/2" value="2.2n"/>
 <part name="RS2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="R2512" package3d_urn="urn:adsk.eagle:package:23545/2" value="DNP"/>
 <part name="R0" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="R0603" package3d_urn="urn:adsk.eagle:package:23555/2" value="0"/>
@@ -23322,7 +23324,7 @@ grid 2.54 mm, vertical</description>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+12V" device=""/>
 <part name="P+2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V+" device=""/>
 <part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="CPOL-EU" device="140CLH-0810" package3d_urn="urn:adsk.eagle:package:23392/1" value="10u/16V"/>
+<part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="CPOL-EU" device="140CLH-0810" package3d_urn="urn:adsk.eagle:package:23392/1" value="220u/16V"/>
 <part name="GND2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V+" device=""/>
@@ -23333,8 +23335,10 @@ grid 2.54 mm, vertical</description>
 <part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+12V" device=""/>
 <part name="GND5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="Q1" library="transistor-power" library_urn="urn:adsk.eagle:library:400" deviceset="IRF740" device="" package3d_urn="urn:adsk.eagle:package:29484/3" value="IRF730"/>
-<part name="C2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="CPOL-EU" device="140CLH-0810" package3d_urn="urn:adsk.eagle:package:23392/1" value="100u/16V"/>
+<part name="Q1" library="transistor-power" library_urn="urn:adsk.eagle:library:400" deviceset="IRF740" device="" package3d_urn="urn:adsk.eagle:package:29484/3" value="IRF730">
+<attribute name="SPICEPREFIX" value="Q"/>
+</part>
+<part name="C2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="CPOL-EU" device="140CLH-0810" package3d_urn="urn:adsk.eagle:package:23392/1" value="220u/16V"/>
 <part name="C3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="C0603K" package3d_urn="urn:adsk.eagle:package:23680/2" value="100n"/>
 <part name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="R0603" package3d_urn="urn:adsk.eagle:package:23555/2" value="1k"/>
 <part name="D2" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="DIODE-" device="DO214AA" package3d_urn="urn:adsk.eagle:package:43433/2" value="MB120"/>
