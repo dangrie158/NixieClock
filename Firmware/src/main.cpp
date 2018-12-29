@@ -179,7 +179,20 @@ void updateTimeZoneInfo()
   {
     // offset is specified in seconds, convert it to
     // whole hours and seperate minutes for the NTPClient
-    NTP.setTimeZone(tzInfo.offset / SECS_PER_HOUR, tzInfo.offset % SECS_PER_HOUR);
+    if (!NTP.setTimeZone(tzInfo.offset / SECS_PER_HOUR, tzInfo.offset % SECS_PER_HOUR))
+    {
+#ifdef DEBUG
+      Serial.println("Failed to set timezone!");
+#endif
+    }else{
+#ifdef DEBUG
+      Serial.print("New Timezone offset: ");
+      Serial.print(NTP.getTimeZone());
+      Serial.print(" hours and ");
+      Serial.print(NTP.getTimeZoneMinutes());
+      Serial.println(" minutes.");
+#endif
+    }
   }
 }
 
@@ -243,7 +256,7 @@ void display(tmElements_t time, uint8_t dots = 0x00)
   digitalWrite(latchPin, HIGH);
 }
 
-void displayPasscode(const char* apPasscode)
+void displayPasscode(const char *apPasscode)
 {
   static uint8_t currentDot = 0;
   static bool direction = true;
@@ -324,10 +337,11 @@ void setup()
   wifiManager.autoConnect("Nixie Clock", apPasscode.c_str());
   connectingTicker.detach();
 
+  NTP.begin("pool.ntp.org");
+
   // initially get the timezone info
   updateTimeZoneInfo();
 
-  NTP.begin("pool.ntp.org");
   NTP.setInterval(63);
 }
 
@@ -359,6 +373,11 @@ void loop()
       Serial.print(tzInfo.validUntil - currentTime);
       Serial.print(" seconds or until: ");
       Serial.println(NTP.getTimeDateString(tzInfo.validUntil));
+
+      Serial.print("current offset: ");
+      Serial.print(tzInfo.offset);
+      Serial.print(" seconds, ");
+      Serial.println(tzInfo.dstInEffect ? "DST active" : "DST inactive");
     }
 #endif
 
