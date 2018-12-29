@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2018-12-29T04:57:00Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.2.2"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.57,
+        "LayerNumber": 2,
+        "Name": {
+            "ProjectId": "PowerSupply"
+        },
+        "Owner": "Daniel Griehaber <dg070@hdm-stuttgart.de>",
+        "Size": {
+            "X": 45,
+            "Y": 37
+        }
+    }
+}
