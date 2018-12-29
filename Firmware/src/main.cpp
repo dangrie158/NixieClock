@@ -24,7 +24,8 @@
 #define NUM_CHIPS 6
 // convert a chip and pin number to the corresponding bit
 // in the serial output stream of the shift registers
-#define P2B(CHIP, PIN) ((((NUM_CHIPS) - (CHIP)) * 8) + (PIN))
+// data is stored in host order (native)
+#define P2B(CHIP, PIN) (((CHIP) * 8) + (PIN))
 
 typedef struct
 {
@@ -197,13 +198,15 @@ void display(tmElements_t time)
   // set latch pin low to avoid displaying the shifting of data
   digitalWrite(latchPin, LOW);
 
-  for (uint8_t numByte = 0; numByte < NUM_CHIPS; numByte++)
+  // shift out the data big-endian (MSByte and MSBit) first
+  // (network order)
+  for (int8_t chip = NUM_CHIPS - 1; chip >= 0; chip--)
   {
-    uint8_t dataByte = (serialStream >> (numByte * 8)) & 0xFF;
-    shiftOut(dataPin, clockPin, LSBFIRST, dataByte);
+    uint8_t dataByte = (serialStream >> (chip * 8)) & 0xFF;
+    shiftOut(dataPin, clockPin, MSBFIRST, dataByte);
 #ifdef DEBUG
     Serial.print("Chip ");
-    Serial.print(NUM_CHIPS - numByte);
+    Serial.print(chip);
     Serial.print(" set to state ");
     Serial.println(String(dataByte, BIN));
 #endif
@@ -213,6 +216,27 @@ void display(tmElements_t time)
   digitalWrite(latchPin, HIGH);
 }
 
+void displayTest()
+{
+  // count up, colon off
+  for (int8_t i = 0; i < 10; i++)
+  {
+    uint8_t doubleDigit = (i * 10) + i;
+    tmElements_t testDisplay = {0, doubleDigit, doubleDigit};
+    display(testDisplay);
+    delay(300);
+  }
+
+  // count down, colon on
+  for (int8_t i = 9; i >= 0; i--)
+  {
+    uint8_t doubleDigit = (i * 10) + i;
+    tmElements_t testDisplay = {1, doubleDigit, doubleDigit};
+    display(testDisplay);
+    delay(300);
+  }
+}
+
 void setup()
 {
   // setup GPIO data directions
@@ -220,14 +244,13 @@ void setup()
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
 
-  // set the outputs to a known state ASAP
-  tmElements_t allZeros = {0, 0, 0};
-  display(allZeros);
-
 #ifdef DEBUG
   // setup the debug serial port
   Serial.begin(115200);
 #endif
+
+  // set the outputs to a known state ASAP
+  displayTest();
 
   // auto-manage wifi configuration
   if (!MDNS.begin("nixie"))
