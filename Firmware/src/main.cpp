@@ -11,6 +11,8 @@
 #include <NtpClientLib.h>
 #include <TimeLib.h>
 
+#include <Ticker.h>
+
 #include "config.h"
 
 // enable uint64 support for UNIX timestamps
@@ -84,6 +86,10 @@ const int responseCapacity = JSON_OBJECT_SIZE(13) + 260;
 // The object to store the current timezone info queried at the start of
 // the sketch or at runtime if the object was no longer valid
 TzInfo tzInfo;
+
+// A ticker used to display an animation on the display while connecting
+// to the WiFi
+Ticker connectingTicker;
 
 /**
  * @brief Get Timezone Info from the timezonedb.com API
@@ -237,6 +243,30 @@ void display(tmElements_t time, uint8_t dots = 0x00)
   digitalWrite(latchPin, HIGH);
 }
 
+void displayPasscode(const char* apPasscode)
+{
+  static uint8_t currentDot = 0;
+  static bool direction = true;
+
+  // increment the currently lit dot in the current "direction"
+  direction ? currentDot++ : currentDot--;
+
+  //change direction if we hit the first or last digit
+  if (currentDot == NUM_DIGITS - 1 || currentDot == 0)
+  {
+    direction = !direction;
+  }
+
+  //convert the passcode into a tmElements_t
+  tmElements_t passcodeTime = {0,
+                               (uint8_t)((apPasscode[2] - '0') * 10 + (apPasscode[3] - '0')),
+                               (uint8_t)((apPasscode[0] - '0') * 10 + (apPasscode[1] - '0'))};
+
+  // update the display
+  uint8_t dotState = 0x01 << currentDot;
+  display(passcodeTime, dotState);
+}
+
 void displayTest()
 {
   // count up, colon off, dots alternate
@@ -274,11 +304,25 @@ void setup()
   displayTest();
 
   // auto-manage wifi configuration
+
+  // create a random numeric 4-digit password
+  String apPasscode = String(random(1000, 10000), DEC);
+
+#ifdef DEBUG
+  Serial.print("Random accesspoint password is: ");
+  Serial.println(apPasscode);
+#endif
+
+  // start to display the connecting animation and passcode
+  connectingTicker.attach(0.5, displayPasscode, apPasscode.c_str());
   if (!MDNS.begin("nixie"))
   {
+#ifdef DEBUG
     Serial.println("Error setting up MDNS responder!");
+#endif
   }
-  wifiManager.autoConnect("Nixie Clock");
+  wifiManager.autoConnect("Nixie Clock", apPasscode.c_str());
+  connectingTicker.detach();
 
   // initially get the timezone info
   updateTimeZoneInfo();
