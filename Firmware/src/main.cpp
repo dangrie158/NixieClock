@@ -334,7 +334,9 @@ void setup()
     Serial.println("Error setting up MDNS responder!");
 #endif
   }
-  wifiManager.autoConnect("Nixie Clock", apPasscode.c_str());
+
+  // repeat the passcode twice to get the 8 char minimum length
+  wifiManager.autoConnect("Nixie Clock", (apPasscode + apPasscode).c_str());
   connectingTicker.detach();
 
   NTP.begin("pool.ntp.org");
