@@ -66,7 +66,7 @@ const uint8_t dataPin = 0;
 const uint8_t digitsPinmap[NUM_DIGITS][10]{
     {P2B(1, 5), P2B(1, 3), P2B(1, 2), P2B(1, 1), P2B(1, 0), P2B(1, 7), P2B(1, 6), P2B(2, 6), P2B(2, 5), P2B(2, 4)},
     {P2B(3, 4), P2B(2, 3), P2B(2, 2), P2B(2, 1), P2B(2, 7), P2B(2, 0), P2B(3, 0), P2B(3, 1), P2B(3, 2), P2B(3, 3)},
-    {P2B(5, 7), P2B(4, 4), P2B(4, 3), P2B(4, 5), P2B(4, 2), P2B(5, 2), P2B(4, 1), P2B(4, 7), P2B(4, 0), P2B(5, 1)},
+    {P2B(5, 7), P2B(4, 4), P2B(4, 3), P2B(4, 5), P2B(4, 2), P2B(4, 6), P2B(4, 1), P2B(4, 7), P2B(4, 0), P2B(5, 1)},
     {P2B(6, 0), P2B(5, 4), P2B(5, 3), P2B(5, 5), P2B(5, 6), P2B(5, 2), P2B(6, 5), P2B(6, 3), P2B(6, 2), P2B(6, 1)}};
 
 // mapping of [led number] to bit in the serial output stream
