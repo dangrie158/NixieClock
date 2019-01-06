@@ -22,12 +22,8 @@
 
 // enable debug messages to the serial port
 #define DEBUG
-
-// number of HV shift registers on the serial data bus
-#define NUM_CHIPS 6
-
-// number of digit tubes in the clock
-#define NUM_DIGITS 4
+// enable debug messages in display function (very slow!!) not working really well with PWM
+#undef DEBUG_DISPLAY
 
 // convert a chip and pin number to the corresponding bit
 // in the serial output stream of the shift registers
@@ -73,7 +69,16 @@ const uint8_t digitsPinmap[NUM_DIGITS][10]{
 const uint8_t ledsPinmap[2] = {P2B(3, 6), P2B(3, 7)};
 
 // mapping of [number digit dot] to bit in the serial output stream
-const uint8_t dotsPinmap[NUM_DIGITS] = {P2B(1, 4), P2B(3, 5), P2B(5, 0), P2B(6, 4)};
+const uint8_t dotsPinmap[numDigits] = {P2B(1, 4), P2B(3, 5), P2B(5, 0), P2B(6, 4)};
+
+// bitmask in the serial stream for the LEDs digits
+const uint64_t ledsMask = (1ull << ledsPinmap[0]) | (1ull << ledsPinmap[1]);
+
+// bitmask in the serial stream for the dots digits
+const uint64_t dotsMask = (1ull << dotsPinmap[0]) | (1ull << dotsPinmap[1]) | (1ull << dotsPinmap[2]) | (1ull << dotsPinmap[3]);
+
+// bitmask in the serial stream for all digits
+const uint64_t digitsMask = ~(ledsMask | dotsMask);
 
 const String timezoneName = "Europe/Berlin";
 // API Key is defined in include/config.h
@@ -90,6 +95,15 @@ TzInfo tzInfo;
 // A ticker used to display an animation on the display while connecting
 // to the WiFi
 Ticker connectingTicker;
+
+// the serial stream that gets shifted out to the display
+uint64_t displaySerialStream;
+
+// current brighnesslevel of the digits
+uint8_t digitBrightness = maxBrightness;
+
+// current brightnesslevel of the colon
+uint8_t ledBrightness = maxBrightness;
 
 /**
  * @brief Get Timezone Info from the timezonedb.com API
@@ -184,7 +198,9 @@ void updateTimeZoneInfo()
 #ifdef DEBUG
       Serial.println("Failed to set timezone!");
 #endif
-    }else{
+    }
+    else
+    {
 #ifdef DEBUG
       Serial.print("New Timezone offset: ");
       Serial.print(NTP.getTimeZone());
@@ -197,54 +213,46 @@ void updateTimeZoneInfo()
 }
 
 /**
- * @brief Display the passed time on the nixie display
- * Shifts out the bit pattern to display the passed 
- * time digits on the nixie display
+ * @brief shift out the actual display data to the shift registers
  * 
- * @param time time to display 
+ * This method is seperate from setDisplay() because it needs to be fast
+ * to be able to simulate a PWM with a 50% duty cycle
  */
-void display(tmElements_t time, uint8_t dots = 0x00)
+void updateDisplay()
 {
-  uint64_t serialStream = 0;
+  // count the number of cycles the digits and dots are on
+  static uint8_t digitPwmCounter = 0;
+  static uint8_t ledPwmCounter = 0;
 
-  serialStream |= 1ull << digitsPinmap[0][time.Hour / 10];
-  serialStream |= 1ull << digitsPinmap[1][time.Hour % 10];
-  serialStream |= 1ull << digitsPinmap[2][time.Minute / 10];
-  serialStream |= 1ull << digitsPinmap[3][time.Minute % 10];
+  // the actual stream to shift out this cycle (with potential masking)
+  uint64_t maskedStream = displaySerialStream;
 
-  // set the outputs for the passed dot-state
-  for (uint8_t dot = 0; dot < NUM_DIGITS; dot++)
+  //mask out the digits if the counter reaches the brightness level
+  if (digitPwmCounter >= digitBrightness)
   {
-    if ((dots >> dot) & 0b1)
-    {
-      serialStream |= 1ull << dotsPinmap[dot];
-    }
+    maskedStream &= ~digitsMask;
   }
+  // increase the counter
+  digitPwmCounter = (digitPwmCounter + 1) % (maxBrightness + 1);
 
-  // blink the LED seperator every other second
-  if (time.Second % 2)
+  //mask out the digits if the counter reaches the brightness level
+  if (ledPwmCounter >= ledBrightness)
   {
-    serialStream |= (1ull << ledsPinmap[0]);
-    serialStream |= (1ull << ledsPinmap[1]);
+    maskedStream &= ~ledsMask;
   }
-
-#ifdef DEBUG
-  Serial.print("Displaying ");
-  Serial.print(time.Hour);
-  Serial.print(time.Second % 2 ? ":" : " ");
-  Serial.println(String(time.Minute));
-#endif
+  // increase the counter
+  ledPwmCounter = (ledPwmCounter + 1) % (maxBrightness + 1);
 
   // set latch pin low to avoid displaying the shifting of data
   digitalWrite(latchPin, LOW);
 
   // shift out the data big-endian (MSByte and MSBit) first
   // (network order)
-  for (int8_t chip = NUM_CHIPS - 1; chip >= 0; chip--)
+  for (int8_t chip = numChips - 1; chip >= 0; chip--)
   {
-    uint8_t dataByte = (serialStream >> (chip * 8)) & 0xFF;
+    uint8_t dataByte = (maskedStream >> (chip * 8)) & 0xFF;
     shiftOut(dataPin, clockPin, MSBFIRST, dataByte);
-#ifdef DEBUG
+#ifdef DEBUG_DISPLAY
     Serial.print("Chip ");
     Serial.print(chip);
     Serial.print(" set to state ");
@@ -256,6 +264,51 @@ void display(tmElements_t time, uint8_t dots = 0x00)
   digitalWrite(latchPin, HIGH);
 }
 
+/**
+ * @brief Display the passed time on the nixie display
+ * Shifts out the bit pattern to display the passed 
+ * time digits on the nixie display
+ * 
+ * @param time time to display 
+ */
+void setDisplay(tmElements_t time, uint8_t dots = 0x00)
+{
+  // reset the display stream
+  displaySerialStream = 0x00;
+
+  // set the 4 digits
+  displaySerialStream |= 1ull << digitsPinmap[0][time.Hour / 10];
+  displaySerialStream |= 1ull << digitsPinmap[1][time.Hour % 10];
+  displaySerialStream |= 1ull << digitsPinmap[2][time.Minute / 10];
+  displaySerialStream |= 1ull << digitsPinmap[3][time.Minute % 10];
+
+  // set the outputs for the passed dot-state
+  for (uint8_t dot = 0; dot < numDigits; dot++)
+  {
+    if ((dots >> dot) & 0b1)
+    {
+      displaySerialStream |= 1ull << dotsPinmap[dot];
+    }
+  }
+
+  // blink the LED seperator every other second
+  if (time.Second % 2)
+  {
+    displaySerialStream |= (1ull << ledsPinmap[0]);
+    displaySerialStream |= (1ull << ledsPinmap[1]);
+  }
+
+#ifdef DEBUG
+  Serial.print("setting display to ");
+  Serial.print(time.Hour);
+  Serial.print(time.Second % 2 ? ":" : " ");
+  Serial.println(String(time.Minute));
+#endif
+
+  //make sure the updated display state is actually displayed
+  updateDisplay();
+}
+
 void displayPasscode(const char *apPasscode)
 {
   static uint8_t currentDot = 0;
@@ -265,7 +318,7 @@ void displayPasscode(const char *apPasscode)
   direction ? currentDot++ : currentDot--;
 
   //change direction if we hit the first or last digit
-  if (currentDot == NUM_DIGITS - 1 || currentDot == 0)
+  if (currentDot == numDigits - 1 || currentDot == 0)
   {
     direction = !direction;
   }
@@ -277,7 +330,7 @@ void displayPasscode(const char *apPasscode)
 
   // update the display
   uint8_t dotState = 0x01 << currentDot;
-  display(passcodeTime, dotState);
+  setDisplay(passcodeTime, dotState);
 }
 
 void displayTest()
@@ -287,7 +340,7 @@ void displayTest()
   {
     uint8_t doubleDigit = (i * 10) + i;
     tmElements_t testDisplay = {0, doubleDigit, doubleDigit};
-    display(testDisplay, i % 2 ? 0b1111 : 0b0000);
+    setDisplay(testDisplay, i % 2 ? 0b1111 : 0b0000);
     delay(300);
   }
 
@@ -296,7 +349,7 @@ void displayTest()
   {
     uint8_t doubleDigit = (i * 10) + i;
     tmElements_t testDisplay = {1, doubleDigit, doubleDigit};
-    display(testDisplay, i % 2 ? 0b1111 : 0b0000);
+    setDisplay(testDisplay, i % 2 ? 0b1111 : 0b0000);
     delay(300);
   }
 }
@@ -352,6 +405,8 @@ void loop()
   static time_t lastUpdate = 0;
 
   time_t currentTime = now();
+
+  // a second passed, update all the data and display
   if (currentTime != lastUpdate)
   {
 #ifdef DEBUG
@@ -385,8 +440,14 @@ void loop()
 
     tmElements_t timeElements;
     breakTime(currentTime, timeElements);
-    display(timeElements);
+    setDisplay(timeElements);
 
     lastUpdate = currentTime;
   }
+
+  // update the display every cycle to be as fast as possible
+  // this should not be done with a ticker as the minimum resolution is
+  // 1ms, however an update only takes <=200µs, thus giving a better
+  // resolution for PWM mode.
+  updateDisplay();
 }
