@@ -58,8 +58,29 @@ const uint8_t clockPin = 4;
 // data pin of TPIC6B595 connected to D3
 const uint8_t dataPin = 0;
 
+// number of HV shift registers on the serial data bus
+const uint8_t numChips = 6;
+
+// number of digit tubes in the clock
+const uint8_t numDigits = 4;
+
+// Actual loop rate is measuread at ~5.6kHz (177µs) with a 100µs space
+// when setting a new value to the display (DEBUG set, DEBUG_DISPLAY cleared).
+// With 10 bigthness levels, the PWM frequency is 1ms which corresponds to a
+// 500Hz refresh rate which is absolutley invisible
+const uint8_t maxBrightness = 50;
+
+// 20% duty cycle at nighttime
+const uint8_t lowBrightness = (maxBrightness / 10) * 2;
+
+// begin of the low-brightness period
+const uint8_t beginLowBrightnessHour = 21;
+
+// end of the low-brightness period
+const uint8_t endLowBrightnessHour = 6;
+
 // the mapping of [digit][number to display] to bitnumber in the serial output stream
-const uint8_t digitsPinmap[NUM_DIGITS][10]{
+const uint8_t digitsPinmap[numDigits][10]{
     {P2B(1, 5), P2B(1, 3), P2B(1, 2), P2B(1, 1), P2B(1, 0), P2B(1, 7), P2B(1, 6), P2B(2, 6), P2B(2, 5), P2B(2, 4)},
     {P2B(3, 4), P2B(2, 3), P2B(2, 2), P2B(2, 1), P2B(2, 7), P2B(2, 0), P2B(3, 0), P2B(3, 1), P2B(3, 2), P2B(3, 3)},
     {P2B(5, 7), P2B(4, 4), P2B(4, 3), P2B(4, 5), P2B(4, 2), P2B(4, 6), P2B(4, 1), P2B(4, 7), P2B(4, 0), P2B(5, 1)},
@@ -409,6 +430,14 @@ void loop()
   // a second passed, update all the data and display
   if (currentTime != lastUpdate)
   {
+    // make sure the display is always on before entering this (slow) loop
+    // so visible lanking of the display is avoided
+    // activate maximum brightness to ensure a display update
+    // will turn on the display and then update the display
+    digitBrightness = maxBrightness;
+    ledBrightness = maxBrightness;
+    updateDisplay();
+
 #ifdef DEBUG
     Serial.print("current time: ");
     Serial.println(NTP.getTimeDateString());
@@ -443,6 +472,21 @@ void loop()
     setDisplay(timeElements);
 
     lastUpdate = currentTime;
+
+    // set the brightness depending on the current time.
+    //if(timeElements.Hour > beginLowBrightnessHour || timeElements.Hour < endLowBrightnessHour){
+    if (timeElements.Second % 3)
+    {
+      // set low-brightness mode
+      ledBrightness = lowBrightness;
+      digitBrightness = lowBrightness;
+    }
+    else
+    {
+      // clear low-brightness mode
+      ledBrightness = maxBrightness;
+      digitBrightness = maxBrightness;
+    }
   }
 
   // update the display every cycle to be as fast as possible
