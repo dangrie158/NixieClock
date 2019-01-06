@@ -474,7 +474,7 @@ void loop()
     lastUpdate = currentTime;
 
     // set the brightness depending on the current time.
-    if(timeElements.Hour > beginLowBrightnessHour || timeElements.Hour < endLowBrightnessHour){
+    if(timeElements.Hour > beginLowBrightnessHour || timeElements.Hour < endLowBrightnessHour)
     {
       // set low-brightness mode
       ledBrightness = lowBrightness;
