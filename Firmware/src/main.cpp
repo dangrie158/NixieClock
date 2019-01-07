@@ -21,7 +21,7 @@
 #include <ArduinoJson.h>
 
 // enable debug messages to the serial port
-#define DEBUG
+#undef DEBUG
 // enable debug messages in display function (very slow!!) not working really well with PWM
 #undef DEBUG_DISPLAY
 
@@ -474,7 +474,7 @@ void loop()
     lastUpdate = currentTime;
 
     // set the brightness depending on the current time.
-    if(timeElements.Hour > beginLowBrightnessHour || timeElements.Hour < endLowBrightnessHour)
+    if (timeElements.Hour >= beginLowBrightnessHour || timeElements.Hour < endLowBrightnessHour)
     {
       // set low-brightness mode
       ledBrightness = lowBrightness;
