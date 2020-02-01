@@ -7,28 +7,26 @@
 #include <ESP8266WebServer.h>
 
 #include <WiFiManager.h>
+#include <WiFiClient.h>
 
 #include <NtpClientLib.h>
 #include <TimeLib.h>
 
 #include <Ticker.h>
 
+#define VARIANT 14
 #include "config.h"
+#include "pins.h"
 
 // enable uint64 support for UNIX timestamps
 // and avoid the Y2038 problem
 #define ARDUINOJSON_USE_LONG_LONG 1
 #include <ArduinoJson.h>
 
-// enable debug messages to the serial port
+// disable debug messages to the serial port
 #undef DEBUG
 // enable debug messages in display function (very slow!!) not working really well with PWM
 #undef DEBUG_DISPLAY
-
-// convert a chip and pin number to the corresponding bit
-// in the serial output stream of the shift registers
-// data is stored in host order (native)
-#define P2B(CHIP, PIN) ((((CHIP)-1) * 8) + (PIN))
 
 typedef struct
 {
@@ -50,19 +48,7 @@ typedef struct
 
 // The WiFiManager Object handles the auto-connect feature
 WiFiManager wifiManager;
-
-// latch pin of TPIC6B595 connected to D1
-const uint8_t latchPin = 5;
-// clock pin of TPIC6B595 connected to D2
-const uint8_t clockPin = 4;
-// data pin of TPIC6B595 connected to D3
-const uint8_t dataPin = 0;
-
-// number of HV shift registers on the serial data bus
-const uint8_t numChips = 6;
-
-// number of digit tubes in the clock
-const uint8_t numDigits = 4;
+WiFiClient client;
 
 // Actual loop rate is measuread at ~5.6kHz (177µs) with a 100µs space
 // when setting a new value to the display (DEBUG set, DEBUG_DISPLAY cleared).
@@ -78,28 +64,6 @@ const uint8_t beginLowBrightnessHour = 21;
 
 // end of the low-brightness period
 const uint8_t endLowBrightnessHour = 6;
-
-// the mapping of [digit][number to display] to bitnumber in the serial output stream
-const uint8_t digitsPinmap[numDigits][10]{
-    {P2B(1, 5), P2B(1, 3), P2B(1, 2), P2B(1, 1), P2B(1, 0), P2B(1, 7), P2B(1, 6), P2B(2, 6), P2B(2, 5), P2B(2, 4)},
-    {P2B(3, 4), P2B(2, 3), P2B(2, 2), P2B(2, 1), P2B(2, 7), P2B(2, 0), P2B(3, 0), P2B(3, 1), P2B(3, 2), P2B(3, 3)},
-    {P2B(5, 7), P2B(4, 4), P2B(4, 3), P2B(4, 5), P2B(4, 2), P2B(4, 6), P2B(4, 1), P2B(4, 7), P2B(4, 0), P2B(5, 1)},
-    {P2B(6, 0), P2B(5, 4), P2B(5, 3), P2B(5, 5), P2B(5, 6), P2B(5, 2), P2B(6, 5), P2B(6, 3), P2B(6, 2), P2B(6, 1)}};
-
-// mapping of [led number] to bit in the serial output stream
-const uint8_t ledsPinmap[2] = {P2B(3, 6), P2B(3, 7)};
-
-// mapping of [number digit dot] to bit in the serial output stream
-const uint8_t dotsPinmap[numDigits] = {P2B(1, 4), P2B(3, 5), P2B(5, 0), P2B(6, 4)};
-
-// bitmask in the serial stream for the LEDs digits
-const uint64_t ledsMask = (1ull << ledsPinmap[0]) | (1ull << ledsPinmap[1]);
-
-// bitmask in the serial stream for the dots digits
-const uint64_t dotsMask = (1ull << dotsPinmap[0]) | (1ull << dotsPinmap[1]) | (1ull << dotsPinmap[2]) | (1ull << dotsPinmap[3]);
-
-// bitmask in the serial stream for all digits
-const uint64_t digitsMask = ~(ledsMask | dotsMask);
 
 const String timezoneName = "Europe/Berlin";
 // API Key is defined in include/config.h
@@ -141,7 +105,7 @@ bool getTzInfo(TzInfo *out)
   }
 
   HTTPClient http;
-  http.begin(timezoneDbUrl);
+  http.begin(client, timezoneDbUrl);
 
   // check the return code
   if (http.GET() != HTTP_CODE_OK)
