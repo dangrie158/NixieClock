@@ -14,7 +14,7 @@
 
 #include <Ticker.h>
 
-#define VARIANT 14
+#define VARIANT 12
 #include "config.h"
 #include "pins.h"
 
@@ -92,8 +92,8 @@ uint8_t ledBrightness = maxBrightness;
 
 /**
  * @brief Get Timezone Info from the timezonedb.com API
- * 
- * @param[out] out the struc containing the new timezone data 
+ *
+ * @param[out] out the struc containing the new timezone data
  * @return true if the request was successful and the out params are written
  * @return false otherwise
  */
@@ -128,24 +128,24 @@ bool getTzInfo(TzInfo *out)
     Serial.println(response);
 #endif
     // parse the request response payload
-    StaticJsonBuffer<responseCapacity> jsonBuffer;
-    JsonObject &json = jsonBuffer.parseObject(response);
+    StaticJsonDocument<responseCapacity> document;
+    deserializeJson(document, response);
 
 #ifdef DEBUG
     Serial.println("Parsed JSON:");
-    json.printTo(Serial);
+    serializeJson(document, Serial);
     Serial.println();
 #endif
     // dst is a string, not a boolean
     // convert it to a boolean by string comparison
-    out->dstInEffect = json.get<String>("dst").equals("1");
+    out->dstInEffect = document["dst"].as<String>().equals("1");
 
     // gmtOffset is specified in seconds
-    out->offset = json.get<int32_t>("gmtOffset");
+    out->offset = document["gmtOffset"].as<int32_t>();
 
     // get the validUntil as time_t(uint64_t) as this is the
     // (potential) size of a UNIX timestamp
-    out->validUntil = json.get<time_t>("zoneEnd");
+    out->validUntil = document["zoneEnd"].as<time_t>();
 
     return true;
   }
@@ -153,11 +153,11 @@ bool getTzInfo(TzInfo *out)
 
 /**
  * @brief make sure the timezone info is up-to-date
- * 
- * if the request to the timezonedb.com API fails, 
+ *
+ * if the request to the timezonedb.com API fails,
  * the ESP is rebooted. This gives it the chance to
  * reconnect to the WiFi or restart in AP mode
- * 
+ *
  */
 void updateTimeZoneInfo()
 {
@@ -199,7 +199,7 @@ void updateTimeZoneInfo()
 
 /**
  * @brief shift out the actual display data to the shift registers
- * 
+ *
  * This method is seperate from setDisplay() because it needs to be fast
  * to be able to simulate a PWM with a 50% duty cycle
  */
@@ -212,7 +212,7 @@ void updateDisplay()
   // the actual stream to shift out this cycle (with potential masking)
   uint64_t maskedStream = displaySerialStream;
 
-  //mask out the digits if the counter reaches the brightness level
+  // mask out the digits if the counter reaches the brightness level
   if (digitPwmCounter >= digitBrightness)
   {
     maskedStream &= ~digitsMask;
@@ -220,7 +220,7 @@ void updateDisplay()
   // increase the counter
   digitPwmCounter = (digitPwmCounter + 1) % (maxBrightness + 1);
 
-  //mask out the digits if the counter reaches the brightness level
+  // mask out the digits if the counter reaches the brightness level
   if (ledPwmCounter >= ledBrightness)
   {
     maskedStream &= ~ledsMask;
@@ -251,10 +251,10 @@ void updateDisplay()
 
 /**
  * @brief Display the passed time on the nixie display
- * Shifts out the bit pattern to display the passed 
+ * Shifts out the bit pattern to display the passed
  * time digits on the nixie display
- * 
- * @param time time to display 
+ *
+ * @param time time to display
  */
 void setDisplay(tmElements_t time, uint8_t dots = 0x00)
 {
@@ -290,11 +290,11 @@ void setDisplay(tmElements_t time, uint8_t dots = 0x00)
   Serial.println(String(time.Minute));
 #endif
 
-  //make sure the updated display state is actually displayed
+  // make sure the updated display state is actually displayed
   updateDisplay();
 }
 
-void displayPasscode(const char *apPasscode)
+void displayPasscode(char *apPasscode)
 {
   static uint8_t currentDot = 0;
   static bool direction = true;
@@ -302,13 +302,13 @@ void displayPasscode(const char *apPasscode)
   // increment the currently lit dot in the current "direction"
   direction ? currentDot++ : currentDot--;
 
-  //change direction if we hit the first or last digit
+  // change direction if we hit the first or last digit
   if (currentDot == numDigits - 1 || currentDot == 0)
   {
     direction = !direction;
   }
 
-  //convert the passcode into a tmElements_t
+  // convert the passcode into a tmElements_t
   tmElements_t passcodeTime = {0,
                                (uint8_t)((apPasscode[2] - '0') * 10 + (apPasscode[3] - '0')),
                                (uint8_t)((apPasscode[0] - '0') * 10 + (apPasscode[1] - '0'))};
@@ -365,7 +365,7 @@ void setup()
 #endif
 
   // start to display the connecting animation and passcode
-  connectingTicker.attach(0.5, displayPasscode, apPasscode.c_str());
+  connectingTicker.attach(0.5, displayPasscode, const_cast<char *>(apPasscode.c_str()));
   if (!MDNS.begin("nixie"))
   {
 #ifdef DEBUG
