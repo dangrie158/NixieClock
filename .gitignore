@@ -40,3 +40,4 @@ eagle.epf
 ~*.xlsx
 *.zip
 
+Firmware/src/config.h
